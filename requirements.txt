@@ -4,3 +4,4 @@ boto3
 pynwb
 sortingview
 jinja2
+pynapple

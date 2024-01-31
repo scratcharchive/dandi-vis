@@ -2,12 +2,13 @@ import json
 import os
 from dandi_nwb_meta.dandi_nwb_meta import load_dandi_nwb_meta_output
 from vis_construction.create_units_vis import create_units_vis
+from vis_construction.create_2d_tuning_curves_vis import create_2d_tuning_curves_vis
 from jinja2 import Environment, FileSystemLoader
 
 
 thisdir = os.path.dirname(os.path.abspath(__file__))
 
-num_assets_to_process = 5
+num_assets_to_process = 10
 
 
 def d_000582():
@@ -32,11 +33,18 @@ def d_000582():
         for out_asset in out_assets:
             print(f"Processing {out_asset['path']}")
             url = out_asset["url"]
-            v = create_units_vis(url)
+            v_units = create_units_vis(url)
             out_asset["visualizations"].append(
                 {
                     "type": "units",
-                    "figurl": v.url(label="Units for " + out_asset["path"]),
+                    "figurl": v_units.url(label="Units for " + out_asset["path"]),
+                }
+            )
+            v_2d_tuning_curves = create_2d_tuning_curves_vis(url)
+            out_asset["visualizations"].append(
+                {
+                    "type": "2d_tuning_curves",
+                    "figurl": v_2d_tuning_curves.url(label="2D tuning curves for " + out_asset["path"]),
                 }
             )
 
