@@ -5,3 +5,4 @@ pynwb
 sortingview
 jinja2
 pynapple
+dendro
