@@ -1,8 +1,2 @@
-git+https://github.com/rly/h5tojson.git
-spikeinterface
-boto3
-pynwb
-sortingview
 jinja2
-pynapple
 dendro

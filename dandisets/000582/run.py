@@ -9,7 +9,7 @@ thisdir = os.path.dirname(os.path.abspath(__file__))
 num_bins = 30
 
 
-def d_000582():
+def main():
     dandiset_id = "000582"
     project_id = "a7852166"
 
@@ -39,9 +39,9 @@ def d_000582():
     data = {"dandiset_id": dandiset_id, "files": files_out}
 
     env = Environment(loader=FileSystemLoader(thisdir))
-    template = env.get_template("d_000582.template.md")
+    template = env.get_template("000582.template.md")
     file_out = template.render(**data)
-    out_fname = os.path.join(thisdir, f"../generated/d_{dandiset_id}.md")
+    out_fname = os.path.join(thisdir, f"{dandiset_id}.md")
     if not os.path.exists(os.path.dirname(out_fname)):
         os.makedirs(os.path.dirname(out_fname))
     with open(out_fname, "w") as f:
@@ -122,6 +122,7 @@ def vis_units_vis(project: den.Project, nwb_file_name: str, dandiset_id: str):
         return {"type": "units", "status": "pending"}
     else:
         url = f.get_url()
+        print(f'Downloading {url}')
         figurl = _download_text(url)
         return {
             "type": "units",
@@ -152,3 +153,7 @@ def _get_nwb_file_paths(project: den.Project, folder_path: str):
         a = _get_nwb_file_paths(project, f.path)
         ret.extend(a)
     return ret
+
+
+if __name__ == "__main__":
+    main()
