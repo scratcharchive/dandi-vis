@@ -2,8 +2,14 @@
 
 Generates visualizations for datasets on DANDI Archive
 
+## Generated visualizations
+
+- [000582](./generated/d_000582.md)
+
 ## Setup
 
 ```
-pip install git+https://github.com/rly/h5tojson.git
+pip install -f requirements.txt
 ```
+
+Then see the scripts/ directory.
