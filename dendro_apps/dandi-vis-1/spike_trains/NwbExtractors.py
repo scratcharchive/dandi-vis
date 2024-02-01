@@ -497,7 +497,7 @@ class NwbSortingExtractor(BaseSorting):
             self.io = NWBHDF5IO(file_path_, mode="r", load_namespaces=True)
 
         self._nwbfile = self.io.read()
-        units_object = _get_units_object(self._nwbfile, units_path)
+        units_object = load_nwb_object(self._nwbfile, units_path)
         units_ids = list(units_object.id[:])
 
         timestamps = None
@@ -578,7 +578,7 @@ class NwbSortingSegment(BaseSortingSegment):
             start_frame = 0
         if end_frame is None:
             end_frame = np.inf
-        units_object = _get_units_object(self._nwbfile, self._units_path)
+        units_object = load_nwb_object(self._nwbfile, self._units_path)
         times = units_object["spike_times"][list(units_object.id[:]).index(unit_id)][:]
 
         if self._timestamps is not None:
@@ -626,13 +626,19 @@ def read_nwb(file_path, load_recording=True, load_sorting=False, electrical_seri
     return outputs
 
 
-def _get_units_object(nwbfile, units_path: Optional[str] = None):
-    if not units_path:
-        return nwbfile.units
-    parts = [p for p in units_path.split("/") if p]
-    if parts[0] != 'processing':
-        raise ValueError(f'Not a supported units path: {units_path}')
-    x = nwbfile.processing
-    for p in parts[1:]:
-        x = x[p]
-    return x
+def load_nwb_object(nwbfile, path: str):
+    """
+    Load an object from an NWB file given its path.
+    """
+    path_parts = [p for p in path.split("/") if p]
+    obj = nwbfile
+    for i, part in enumerate(path_parts):
+        if i == 0:
+            if part == "processing":
+                obj = obj.processing
+                continue
+            elif part == "units":
+                obj = obj.units
+                continue
+        obj = obj[part]
+    return obj
