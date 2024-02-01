@@ -1,0 +1,36 @@
+name: Build dendro1 image and push to GCR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "dendro_apps/dandi-vis-1/**"
+  workflow_dispatch:
+
+jobs:
+  publish-docker-image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Docker image
+        run: |
+          cd dendro_apps/dandi-vis-1 && \
+          NAME="dandi-vis-1" && \
+          docker buildx build --push \
+          -t ghcr.io/magland/$NAME:latest \
+          -f Dockerfile .

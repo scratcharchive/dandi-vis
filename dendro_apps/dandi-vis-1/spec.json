@@ -1,0 +1,60 @@
+{
+    "name": "dandi-vis-1",
+    "description": "Miscellaneous processors for dandi-vis",
+    "appImage": "ghcr.io/magland/dandi-vis-1:latest",
+    "appExecutable": "/app/main.py",
+    "executable": "/app/main.py",
+    "processors": [
+        {
+            "name": "dendro1.tuning_curves_2d",
+            "description": "Create 2D tuning curves from an NWB file using Pynapple",
+            "label": "dendro1.tuning_curves_2d",
+            "inputs": [
+                {
+                    "name": "input",
+                    "description": "Input NWB file"
+                }
+            ],
+            "inputFolders": [],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": "Output .nh5 file"
+                }
+            ],
+            "outputFolders": [],
+            "parameters": [
+                {
+                    "name": "spatial_series_path",
+                    "description": "Path to spatial series within NWB file, e.g. '/processing/behavior/Position/SpatialSeriesLED1'",
+                    "type": "str"
+                },
+                {
+                    "name": "units_path",
+                    "description": "Path to units within NWB file, default: '/units'",
+                    "type": "str",
+                    "default": "/units"
+                },
+                {
+                    "name": "num_bins",
+                    "description": "Number of bins (in one dimension) for tuning curves",
+                    "type": "int"
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "pynapple"
+                },
+                {
+                    "tag": "nwb"
+                }
+            ]
+        }
+    ]
+}

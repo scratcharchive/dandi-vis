@@ -1,0 +1,24 @@
+FROM python:3.9
+
+# Install pynwb
+RUN pip install pynwb==2.5.0
+
+# Install spikeinterface
+RUN pip install spikeinterface==0.99.1
+
+# Install pynapple
+RUN pip install pynapple==0.5.0
+
+# Install mountainsort5
+RUN pip install mountainsort5==0.5.3
+
+# Install nh5
+RUN pip install nh5==0.1.3
+
+# Install dendro
+RUN pip install dendro==0.1.36
+
+# Copy files into the container
+RUN mkdir /app
+COPY *.py /app/
+COPY apps/dendro1/tuning_curves_2d/*.py /app/tuning_curves_2d/
