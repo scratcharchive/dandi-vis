@@ -49,11 +49,15 @@ class SpikeTrainsProcessor(ProcessorBase):
 
         unit_ids = [unit_id for unit_id in sorting.get_unit_ids()]
         total_num_spikes = 0
+        max_time = -np.inf
         for unit_id in unit_ids:
-            total_num_spikes += len(sorting.get_unit_spike_train(unit_id))
+            st = sorting.get_unit_spike_train(unit_id)
+            total_num_spikes += len(st)
+            if len(st) > 0:
+                max_time = max(max_time, np.max(st) / sorting.get_sampling_frequency())
         num_spikes_per_chunk = 500000
         approx_num_chunks = int(np.ceil(total_num_spikes / num_spikes_per_chunk))
-        total_duration_sec = sorting.get_total_duration()
+        total_duration_sec = max_time  # we assume the start time is 0
         approx_duration_per_chunk_sec = total_duration_sec / approx_num_chunks
         duration_per_chunk_sec_options = [
             10,
@@ -72,6 +76,7 @@ class SpikeTrainsProcessor(ProcessorBase):
             if approx_duration_per_chunk_sec < duration_per_chunk_sec:
                 break
         num_chunks = int(np.ceil(total_duration_sec / duration_per_chunk_sec))
+        print(f'Using {num_chunks} chunks of duration {duration_per_chunk_sec} sec')
         chunks = []
         for i in range(num_chunks):
             start_time = i * duration_per_chunk_sec
