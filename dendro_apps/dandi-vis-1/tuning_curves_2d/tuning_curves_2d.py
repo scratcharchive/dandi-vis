@@ -33,7 +33,7 @@ class TuningCurves2DProcessor(ProcessorBase):
         import pynapple as nap
         import h5py
         from nh5 import h5_to_nh5
-        from load_nwb_object import load_nwb_object
+        from .load_nwb_object import load_nwb_object
 
         input_file = context.input.get_file()
         input_nwb = pynwb.NWBHDF5IO(file=h5py.File(input_file, "r"), mode="r").read()
