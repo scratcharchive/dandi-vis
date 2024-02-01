@@ -95,9 +95,9 @@ class SpikeTrainsProcessor(ProcessorBase):
             f.attrs["sampling_frequency"] = sorting.get_sampling_frequency()
             f.attrs["total_duration_sec"] = total_duration_sec
             f.attrs["total_num_spikes"] = total_num_spikes
-            for i in range(len(chunks)):
-                start_time = chunks[i]["start"]
-                end_time = chunks[i]["end"]
+            for i in range(len(chunk_start_times)):
+                start_time = chunk_start_times[i]
+                end_time = chunk_end_times[i]
                 start_frame = int(start_time * sampling_frequency)
                 end_frame = int(end_time * sampling_frequency)
                 chunk_spike_trains = [
