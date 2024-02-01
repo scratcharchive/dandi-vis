@@ -55,6 +55,53 @@
                     "tag": "nwb"
                 }
             ]
+        },
+        {
+            "name": "dandi-vis-1.spike_trains",
+            "description": "Create spike trains .nh5 file from an NWB file",
+            "label": "dandi-vis-1.spike_trains",
+            "inputs": [
+                {
+                    "name": "input",
+                    "description": "Input NWB file"
+                }
+            ],
+            "inputFolders": [],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": "Output .nh5 file"
+                }
+            ],
+            "outputFolders": [],
+            "parameters": [
+                {
+                    "name": "units_path",
+                    "description": "Path to units within NWB file, default: '/units'",
+                    "type": "str",
+                    "default": "/units"
+                },
+                {
+                    "name": "sampling_frequency",
+                    "description": "Override the sampling frequency of the recording",
+                    "type": "Optional[float]",
+                    "default": null
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "pynapple"
+                },
+                {
+                    "tag": "nwb"
+                }
+            ]
         }
     ]
 }

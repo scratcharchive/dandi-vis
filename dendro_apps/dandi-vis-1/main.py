@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 
-from dendro.sdk import (
-    App,
-)
+from dendro.sdk import App
 from tuning_curves_2d.tuning_curves_2d import TuningCurves2DProcessor
+from spike_trains.spike_trains import SpikeTrainsProcessor
 
 app = App(
     name="dandi-vis-1",
@@ -15,6 +14,7 @@ app = App(
 
 
 app.add_processor(TuningCurves2DProcessor)
+app.add_processor(SpikeTrainsProcessor)
 
 if __name__ == "__main__":
     app.run()
