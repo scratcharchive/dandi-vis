@@ -76,20 +76,26 @@ def vis_tuning_curves_2d(project: den.Project, nwb_file_name: str, dandiset_id: 
         run_method="local",
     )
     f = project.get_file(output_file_name)
+    type0 = "tuning_curves_2d"
+    label0 = "2D tuning curves"
     if f is None:
-        return {"type": "2d_tuning_curves", "status": "submitted"}
+        status0 = "submitted"
+        figurl0 = None
     elif (
         f is not None and f._file_data.content == "pending"
     ):  # todo: expose this in the dendro API somehow
-        return {"type": "2d_tuning_curves", "status": "pending"}
+        status0 = "pending"
+        figurl0 = None
     else:
         url = f.get_url()
-        figurl = f"https://figurl.org/f?v=https://figurl-tuning-curves-1.surge.sh&d=%7B%22type%22:%22tuning_curves_2d_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/tuning_curves_2d.nh5"
-        return {
-            "type": "2d_tuning_curves",
-            "status": "done",
-            "figurl": figurl,
-        }
+        figurl0 = f"https://figurl.org/f?v=https://figurl-tuning-curves-1.surge.sh&d=%7B%22type%22:%22tuning_curves_2d_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/tuning_curves_2d.nh5"
+        status0 = "done"
+    return {
+        "type": type0,
+        "label": label0,
+        "status": status0,
+        "figurl": figurl0,
+    }
 
 
 def vis_spike_trains(project: den.Project, nwb_file_name: str, dandiset_id: str):
@@ -114,20 +120,26 @@ def vis_spike_trains(project: den.Project, nwb_file_name: str, dandiset_id: str)
         run_method="local",
     )
     f = project.get_file(output_file_name)
+    type0 = "spike_trains"
+    label0 = "Spike trains"
     if f is None:
-        return {"type": "spike_trains", "status": "submitted"}
+        status0 = "submitted"
+        figurl0 = None
     elif (
         f is not None and f._file_data.content == "pending"
     ):  # todo: expose this in the dendro API somehow
-        return {"type": "spike_trains", "status": "pending"}
+        status0 = "pending"
+        figurl0 = None
     else:
         url = f.get_url()
-        figurl = f"https://figurl.org/f?v=https://figurl-dandi-vis-1.surge.sh&d=%7B%22type%22:%22spike_trains_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/spike_trains.nh5"
-        return {
-            "type": "spike_trains",
-            "status": "done",
-            "figurl": figurl,
-        }
+        figurl0 = f"https://figurl.org/f?v=https://figurl-dandi-vis.surge.sh&d=%7B%22type%22:%22spike_trains_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/spike_trains.nh5"
+        status0 = "done"
+    return {
+        "type": type0,
+        "label": label0,
+        "status": status0,
+        "figurl": figurl0,
+    }
 
 
 def _get_nwb_file_paths(project: den.Project, folder_path: str):

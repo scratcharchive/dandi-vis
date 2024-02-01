@@ -12,6 +12,8 @@ num_bins = 30
 def main():
     dandiset_id = "000784"
     project_id = "c031e7bd"
+    units_path = "/processing/ecephys/units"
+    sampling_frequency = 30000  # need to hardcode for now b/c sorting extractor not finding the recording.
 
     # Load the project
     project = den.load_project(project_id)
@@ -24,12 +26,12 @@ def main():
         file_out = {"nwb_file_name": nwb_file_name_2, "visualizations": []}
         print(f"Processing {nwb_file_name_2}")
 
-        v = vis_units_vis(
+        v = vis_spike_trains(
             project=project,
             nwb_file_name=nwb_file_name,
             dandiset_id=dandiset_id,
-            units_path="/processing/ecephys/units",
-            sampling_frequency=30000, # we need to hard-code a value here because there is no ephys data in the NWB file
+            units_path=units_path,
+            sampling_frequency=sampling_frequency,
         )
         file_out["visualizations"].append(v)
 
@@ -47,20 +49,20 @@ def main():
         f.write(file_out)
 
 
-def vis_units_vis(
+def vis_spike_trains(
     project: den.Project,
     nwb_file_name: str,
     dandiset_id: str,
-    units_path: Optional[str] = None,
-    sampling_frequency: Optional[float] = None,
+    units_path: str,
+    sampling_frequency: Optional[float],
 ):
     nwb_file_name_2 = nwb_file_name[len(f"imported/{dandiset_id}/") :]
     output_file_name = (
-        f"generated/{dandiset_id}/" + nwb_file_name_2 + "/units_vis.figurl"
+        f"generated/{dandiset_id}/" + nwb_file_name_2 + "/spike_trains.nh5"
     )
     den.submit_job(
         project=project,
-        processor_name="dendro1.units_vis",
+        processor_name="dandi-vis-1.spike_trains",
         input_files=[den.SubmitJobInputFile(name="input", file_name=nwb_file_name)],
         output_files=[
             den.SubmitJobOutputFile(
@@ -78,32 +80,26 @@ def vis_units_vis(
         run_method="local",
     )
     f = project.get_file(output_file_name)
+    type0 = "spike_trains"
+    label0 = "Spike trains"
     if f is None:
-        return {"type": "units", "status": "submitted"}
+        status0 = "submitted"
+        figurl0 = None
     elif (
         f is not None and f._file_data.content == "pending"
     ):  # todo: expose this in the dendro API somehow
-        return {"type": "units", "status": "pending"}
+        status0 = "pending"
+        figurl0 = None
     else:
         url = f.get_url()
-        print(f"Downloading {url}")
-        figurl = _download_text(url)
-        return {
-            "type": "units",
-            "status": "done",
-            "figurl": figurl,
-        }
-
-
-def _download_text(url: str):
-    from urllib import request
-
-    req = request.Request(
-        url,
-        headers={"User-Agent": "Mozilla/5.0"},
-    )
-    with request.urlopen(req) as response:
-        return response.read().decode("utf-8")
+        figurl0 = f"https://figurl.org/f?v=https://figurl-dandi-vis.surge.sh&d=%7B%22type%22:%22spike_trains_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/spike_trains.nh5"
+        status0 = "done"
+    return {
+        "type": type0,
+        "label": label0,
+        "status": status0,
+        "figurl": figurl0,
+    }
 
 
 def _get_nwb_file_paths(project: den.Project, folder_path: str):
