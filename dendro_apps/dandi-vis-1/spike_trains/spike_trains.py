@@ -77,18 +77,21 @@ class SpikeTrainsProcessor(ProcessorBase):
                 break
         num_chunks = int(np.ceil(total_duration_sec / duration_per_chunk_sec))
         print(f'Using {num_chunks} chunks of duration {duration_per_chunk_sec} sec')
-        chunks = []
+        chunk_start_times = []
+        chunk_end_times = []
         for i in range(num_chunks):
             start_time = i * duration_per_chunk_sec
             end_time = min((i + 1) * duration_per_chunk_sec, total_duration_sec)
-            chunks.append({"start": start_time, "end": end_time})
+            chunk_start_times.append(start_time)
+            chunk_end_times.append(end_time)
 
         output_h5_fname = "output.h5"
         with h5py.File(output_h5_fname, "w") as f:
             f.attrs["type"] = "spike_trains"
             f.attrs["format_version"] = 1
             f.attrs["unit_ids"] = unit_ids
-            f.attrs["chunks"] = chunks
+            f.attrs["chunk_start_times"] = chunk_start_times
+            f.attrs["chunk_end_times"] = chunk_end_times
             f.attrs["sampling_frequency"] = sorting.get_sampling_frequency()
             f.attrs["total_duration_sec"] = total_duration_sec
             f.attrs["total_num_spikes"] = total_num_spikes
