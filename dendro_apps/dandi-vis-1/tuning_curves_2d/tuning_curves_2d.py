@@ -20,9 +20,9 @@ class TuningCurves2DContext(BaseModel):
 
 
 class TuningCurves2DProcessor(ProcessorBase):
-    name = "dendro1.tuning_curves_2d"
+    name = "dandi-vis-1.tuning_curves_2d"
     description = "Create 2D tuning curves from an NWB file using Pynapple"
-    label = "dendro1.tuning_curves_2d"
+    label = "dandi-vis-1.tuning_curves_2d"
     tags = ["pynapple", "nwb"]
     attributes = {"wip": True}
 

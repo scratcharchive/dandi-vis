@@ -21,4 +21,4 @@ RUN pip install dendro==0.1.36
 # Copy files into the container
 RUN mkdir /app
 COPY *.py /app/
-COPY apps/dendro1/tuning_curves_2d/*.py /app/tuning_curves_2d/
+COPY tuning_curves_2d/*.py /app/tuning_curves_2d/

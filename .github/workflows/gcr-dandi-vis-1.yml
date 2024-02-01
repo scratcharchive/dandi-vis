@@ -1,4 +1,4 @@
-name: Build dendro1 image and push to GCR
+name: Build dandi-vis-1 image and push to GCR
 
 on:
   push:
