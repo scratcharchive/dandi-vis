@@ -29,10 +29,10 @@ def main():
         )
         file_out["visualizations"].append(v)
 
-        # v = vis_units_vis(
-        #     project=project, nwb_file_name=nwb_file_name, dandiset_id=dandiset_id
-        # )
-        # file_out["visualizations"].append(v)
+        v = vis_spike_trains(
+            project=project, nwb_file_name=nwb_file_name, dandiset_id=dandiset_id
+        )
+        file_out["visualizations"].append(v)
 
         files_out.append(file_out)
 
@@ -92,54 +92,42 @@ def vis_tuning_curves_2d(project: den.Project, nwb_file_name: str, dandiset_id: 
         }
 
 
-# def vis_units_vis(project: den.Project, nwb_file_name: str, dandiset_id: str):
-#     nwb_file_name_2 = nwb_file_name[len(f"imported/{dandiset_id}/") :]
-#     output_file_name = (
-#         f"generated/{dandiset_id}/" + nwb_file_name_2 + "/units_vis.figurl"
-#     )
-#     den.submit_job(
-#         project=project,
-#         processor_name="dendro1.units_vis",
-#         input_files=[den.SubmitJobInputFile(name="input", file_name=nwb_file_name)],
-#         output_files=[
-#             den.SubmitJobOutputFile(
-#                 name="output",
-#                 file_name=output_file_name,
-#             )
-#         ],
-#         parameters=[],
-#         required_resources=den.DendroJobRequiredResources(
-#             numCpus=2, numGpus=0, memoryGb=4, timeSec=60 * 60
-#         ),
-#         run_method="local",
-#     )
-#     f = project.get_file(output_file_name)
-#     if f is None:
-#         return {"type": "units", "status": "submitted"}
-#     elif (
-#         f is not None and f._file_data.content == "pending"
-#     ):  # todo: expose this in the dendro API somehow
-#         return {"type": "units", "status": "pending"}
-#     else:
-#         url = f.get_url()
-#         print(f'Downloading {url}')
-#         figurl = _download_text(url)
-#         return {
-#             "type": "units",
-#             "status": "done",
-#             "figurl": figurl,
-#         }
-
-
-def _download_text(url: str):
-    from urllib import request
-
-    req = request.Request(
-        url,
-        headers={"User-Agent": "Mozilla/5.0"},
+def vis_spike_trains(project: den.Project, nwb_file_name: str, dandiset_id: str):
+    nwb_file_name_2 = nwb_file_name[len(f"imported/{dandiset_id}/") :]
+    output_file_name = (
+        f"generated/{dandiset_id}/" + nwb_file_name_2 + "/spike_trains.nh5"
     )
-    with request.urlopen(req) as response:
-        return response.read().decode("utf-8")
+    den.submit_job(
+        project=project,
+        processor_name="dandi-vis-1.spike_trains",
+        input_files=[den.SubmitJobInputFile(name="input", file_name=nwb_file_name)],
+        output_files=[
+            den.SubmitJobOutputFile(
+                name="output",
+                file_name=output_file_name,
+            )
+        ],
+        parameters=[],
+        required_resources=den.DendroJobRequiredResources(
+            numCpus=2, numGpus=0, memoryGb=4, timeSec=60 * 60
+        ),
+        run_method="local",
+    )
+    f = project.get_file(output_file_name)
+    if f is None:
+        return {"type": "spike_trains", "status": "submitted"}
+    elif (
+        f is not None and f._file_data.content == "pending"
+    ):  # todo: expose this in the dendro API somehow
+        return {"type": "spike_trains", "status": "pending"}
+    else:
+        url = f.get_url()
+        figurl = f"https://figurl.org/f?v=https://figurl-dandi-vis-1.surge.sh&d=%7B%22type%22:%22spike_trains_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/spike_trains.nh5"
+        return {
+            "type": "spike_trains",
+            "status": "done",
+            "figurl": figurl,
+        }
 
 
 def _get_nwb_file_paths(project: den.Project, folder_path: str):
