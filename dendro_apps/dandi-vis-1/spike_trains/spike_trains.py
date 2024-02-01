@@ -47,6 +47,9 @@ class SpikeTrainsProcessor(ProcessorBase):
             sampling_frequency=sampling_frequency,
         )
 
+        if sampling_frequency is None:
+            sampling_frequency = sorting.get_sampling_frequency()
+
         unit_ids = [unit_id for unit_id in sorting.get_unit_ids()]
         total_num_spikes = 0
         max_time = -np.inf
