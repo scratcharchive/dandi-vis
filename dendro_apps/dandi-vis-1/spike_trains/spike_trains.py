@@ -119,8 +119,8 @@ class SpikeTrainsProcessor(ProcessorBase):
                     spike_times = np.array([], dtype=np.float32)
                 spike_times_index = []
                 ind = 0
-                for i in range(len(chunk_spike_trains)):
-                    ind += len(chunk_spike_trains[i])
+                for jj in range(len(chunk_spike_trains)):
+                    ind += len(chunk_spike_trains[jj])
                     spike_times_index.append(ind)
                 spike_times_index = np.array(spike_times_index, dtype=np.int32)
                 f.create_dataset(f"/chunk_{i}/spike_times", data=spike_times)
