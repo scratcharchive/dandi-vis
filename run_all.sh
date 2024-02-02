@@ -9,3 +9,4 @@ if [ -z "$DENDRO_API_KEY" ]; then
 fi
 
 python dandisets/000582/run.py
+python dandisets/000784/run.py
