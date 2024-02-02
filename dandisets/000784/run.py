@@ -1,4 +1,3 @@
-from typing import List, Optional
 import os
 from jinja2 import Environment, FileSystemLoader
 import dendro.client as den
@@ -52,12 +51,10 @@ def main():
 
     data = {"dandiset_id": dandiset_id, "files": files_out}
 
-    env = Environment(loader=FileSystemLoader(thisdir))
-    template = env.get_template(f"templates/{dandiset_id}.template.md")
+    env = Environment(loader=FileSystemLoader(thisdir + '/../common/templates'))
+    template = env.get_template("dandiset.template.md")
     file_out = template.render(**data)
     out_fname = os.path.join(thisdir, f"{dandiset_id}.md")
-    if not os.path.exists(os.path.dirname(out_fname)):
-        os.makedirs(os.path.dirname(out_fname))
     with open(out_fname, "w") as f:
         f.write(file_out)
 
