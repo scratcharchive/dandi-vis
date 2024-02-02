@@ -41,7 +41,7 @@ def vis_tuning_curves_2d(project: den.Project, nwb_file_name: str, dandiset_id: 
         figurl0 = None
     else:
         url = f.get_url()
-        figurl0 = f"https://figurl.org/f?v=https://figurl-tuning-curves-1.surge.sh&d=%7B%22type%22:%22tuning_curves_2d_nh5%22,%22nh5_file%22:%22{url}%22%7D&label={nwb_file_name_2}/tuning_curves_2d.nh5"
+        figurl0 = f"https://figurl.org/f?v=npm://@fi-sci/figurl-dandi-vis@0.1/dist&d=%7B%22nh5%22:%22{url}%22%7D&label={nwb_file_name_2}/tuning_curves_2d.nh5"
         status0 = "done"
     return {
         "type": type0,
