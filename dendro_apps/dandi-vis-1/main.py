@@ -3,7 +3,7 @@
 
 from dendro.sdk import App
 from tuning_curves_2d.tuning_curves_2d import TuningCurves2DProcessor
-from spike_trains.spike_trains import SpikeTrainsProcessor
+from spike_sorting_summary.spike_sorting_summary import SpikeSortingSummaryProcessor
 
 app = App(
     name="dandi-vis-1",
@@ -14,7 +14,7 @@ app = App(
 
 
 app.add_processor(TuningCurves2DProcessor)
-app.add_processor(SpikeTrainsProcessor)
+app.add_processor(SpikeSortingSummaryProcessor)
 
 if __name__ == "__main__":
     app.run()
