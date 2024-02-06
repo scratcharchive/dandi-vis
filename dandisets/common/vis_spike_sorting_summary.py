@@ -2,7 +2,7 @@ from typing import Optional
 import dendro.client as den
 
 
-def vis_spike_trains(
+def vis_spike_sorting_summary(
     project: den.Project,
     nwb_file_name: str,
     dandiset_id: str,
@@ -11,11 +11,11 @@ def vis_spike_trains(
 ):
     nwb_file_name_2 = nwb_file_name[len(f"imported/{dandiset_id}/") :]
     output_file_name = (
-        f"generated/{dandiset_id}/" + nwb_file_name_2 + "/spike_trains.nh5"
+        f"generated/{dandiset_id}/" + nwb_file_name_2 + "/spike_sorting_summary.nh5"
     )
     den.submit_job(
         project=project,
-        processor_name="dandi-vis-1.spike_trains",
+        processor_name="dandi-vis-1.spike_sorting_summary",
         input_files=[den.SubmitJobInputFile(name="input", file_name=nwb_file_name)],
         output_files=[
             den.SubmitJobOutputFile(
@@ -33,8 +33,8 @@ def vis_spike_trains(
         run_method="local",
     )
     f = project.get_file(output_file_name)
-    type0 = "spike_trains"
-    label0 = "Spike trains"
+    type0 = "spike_sorting_summary"
+    label0 = "Spike sorting summary"
     if f is None:
         status0 = "submitted"
         figurl0 = None
@@ -45,7 +45,7 @@ def vis_spike_trains(
         figurl0 = None
     else:
         url = f.get_url()
-        figurl0 = f"https://figurl.org/f?v=npm://@fi-sci/figurl-dandi-vis@0.1/dist&d=%7B%22nh5%22:%22{url}%22%7D&label={nwb_file_name_2}/spike_trains.nh5"
+        figurl0 = f"https://figurl.org/f?v=npm://@fi-sci/figurl-dandi-vis@0.1/dist&d=%7B%22nh5%22:%22{url}%22%7D&label={nwb_file_name_2}/spike_sorting_summary.nh5"
         status0 = "done"
     return {
         "type": type0,

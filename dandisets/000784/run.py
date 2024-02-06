@@ -6,7 +6,7 @@ import dendro.client as den
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from common.vis_spike_trains import vis_spike_trains
+from common.vis_spike_sorting_summary import vis_spike_sorting_summary
 from common._get_nwb_file_paths import _get_nwb_file_paths
 
 
@@ -33,7 +33,7 @@ def main():
         file_out = {"nwb_file_name": nwb_file_name_2, "visualizations": []}
         print(f"Processing {nwb_file_name_2}")
 
-        v = vis_spike_trains(
+        v = vis_spike_sorting_summary(
             project=project,
             nwb_file_name=nwb_file_name,
             dandiset_id=dandiset_id,
