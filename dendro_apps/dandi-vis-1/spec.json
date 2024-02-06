@@ -57,9 +57,9 @@
             ]
         },
         {
-            "name": "dandi-vis-1.spike_trains",
-            "description": "Create spike trains .nh5 file from an NWB file",
-            "label": "dandi-vis-1.spike_trains",
+            "name": "dandi-vis-1.spike_sorting_summary",
+            "description": "Create spike sorting summary .nh5 file from an NWB file",
+            "label": "dandi-vis-1.spike_sorting_summary",
             "inputs": [
                 {
                     "name": "input",
@@ -96,10 +96,10 @@
             ],
             "tags": [
                 {
-                    "tag": "pynapple"
+                    "tag": "nwb"
                 },
                 {
-                    "tag": "nwb"
+                    "tag": "spike sorting"
                 }
             ]
         }

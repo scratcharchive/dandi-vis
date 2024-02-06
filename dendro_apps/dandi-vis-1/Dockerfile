@@ -22,4 +22,4 @@ RUN pip install dendro==0.1.36
 RUN mkdir /app
 COPY *.py /app/
 COPY tuning_curves_2d/*.py /app/tuning_curves_2d/
-COPY spike_trains/*.py /app/spike_trains/
+COPY spike_sorting_summary/*.py /app/spike_sorting_summary/
