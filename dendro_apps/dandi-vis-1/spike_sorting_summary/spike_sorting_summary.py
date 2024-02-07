@@ -59,8 +59,10 @@ class SpikeSortingSummaryProcessor(ProcessorBase):
         unit_ids = [unit_id for unit_id in sorting.get_unit_ids()]
         total_num_spikes = 0
         max_time = -np.inf
+        spike_counts = []
         for unit_id in unit_ids:
             st = sorting.get_unit_spike_train(unit_id)
+            spike_counts.append(len(st))
             total_num_spikes += len(st)
             if len(st) > 0:
                 max_time = max(max_time, np.max(st) / sorting.get_sampling_frequency())
@@ -80,6 +82,7 @@ class SpikeSortingSummaryProcessor(ProcessorBase):
                 total_num_spikes=total_num_spikes,
                 total_duration_sec=total_duration_sec,
                 unit_ids=unit_ids,
+                spike_counts=spike_counts,
             )
             _create_autocrorrelograms(
                 f=f,
@@ -99,6 +102,7 @@ def _create_spike_trains(
     total_num_spikes: int,
     total_duration_sec: float,
     unit_ids: list,
+    spike_counts: list,
 ):
     sampling_frequency = sorting.get_sampling_frequency()
 
@@ -139,6 +143,7 @@ def _create_spike_trains(
     spike_trains_group.attrs["sampling_frequency"] = sorting.get_sampling_frequency()
     spike_trains_group.attrs["total_duration_sec"] = total_duration_sec
     spike_trains_group.attrs["total_num_spikes"] = total_num_spikes
+    spike_trains_group.attrs["spike_counts"] = spike_counts
     for i in range(len(chunk_start_times)):
         start_time = chunk_start_times[i]
         end_time = chunk_end_times[i]
