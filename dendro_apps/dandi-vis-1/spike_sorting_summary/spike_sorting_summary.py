@@ -197,7 +197,7 @@ def _create_autocrorrelograms(
     autocorrelograms_group = f.create_group("autocorrelograms")
     autocorrelograms_group.attrs["type"] = "autocorrelograms"
     autocorrelograms_group.attrs["unit_ids"] = unit_ids
-    autocorrelograms_group.attrs["bin_edges_sec"] = np.array(bin_edges_sec).astype(
+    autocorrelograms_group.create_dataset("bin_edges_sec", data=np.array(bin_edges_sec).astype(
         np.float32
-    )
+    ))
     autocorrelograms_group.create_dataset("bin_counts", data=all_bin_counts)
