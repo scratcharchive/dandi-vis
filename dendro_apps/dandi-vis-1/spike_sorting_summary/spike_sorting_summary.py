@@ -38,6 +38,7 @@ class SpikeSortingSummaryProcessor(ProcessorBase):
 
         # with remfile support
         # and support for units_path
+        # and try/catch for setting properties
         from .NwbExtractors import NwbSortingExtractor
 
         input_file_url = context.input.get_url()
