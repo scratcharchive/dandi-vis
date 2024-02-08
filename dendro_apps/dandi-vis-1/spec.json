@@ -126,6 +126,12 @@
                     "name": "electrical_series_path",
                     "description": "Path to electrical series within NWB file",
                     "type": "str"
+                },
+                {
+                    "name": "duration_sec",
+                    "description": "Duration of the recording to process",
+                    "type": "Optional[float]",
+                    "default": null
                 }
             ],
             "attributes": [

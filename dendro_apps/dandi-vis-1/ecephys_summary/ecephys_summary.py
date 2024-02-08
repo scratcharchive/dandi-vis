@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+from typing import Optional
 from dendro.sdk import ProcessorBase, InputFile, OutputFile
 from dendro.sdk import BaseModel, Field
 import numpy as np
@@ -11,6 +11,10 @@ class EcephysSummaryContext(BaseModel):
     output: OutputFile = Field(description="Output .nh5 file")
     electrical_series_path: str = Field(
         description="Path to electrical series within NWB file"
+    )
+    duration_sec: Optional[float] = Field(
+        default=None,
+        description="Duration of the recording to process"
     )
 
 
@@ -32,12 +36,19 @@ class EcephysSummaryProcessor(ProcessorBase):
         # instead of just the url because the
         # presigned url needs to be renewed every hour
         ff = context.input.get_file()
+        duration_sec = context.duration_sec
 
         print('Loading recording...')
         recording = se.NwbRecordingExtractor(
             file=ff,
             electrical_series_path=context.electrical_series_path
         )
+        if duration_sec:
+            print(f'Using duration_sec={duration_sec}')
+            if duration_sec < recording.get_num_frames() / recording.get_sampling_frequency():
+                recording = recording.frame_slice(0, int(duration_sec * recording.get_sampling_frequency()))
+            else:
+                print(f'Not imposing duration_sec={duration_sec} because it is longer than the recording')
         p_recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000)
         p_recording = spre.common_reference(p_recording)
 
