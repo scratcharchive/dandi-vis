@@ -543,7 +543,12 @@ class NwbSortingExtractor(BaseSorting):
         self.add_sorting_segment(sorting_segment)
 
         for prop_name, values in properties.items():
-            self.set_property(prop_name, np.array(values))
+            # jfm: added try/catch because there was a problem with IBL example
+            # ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (264,) + inhomogeneous part.
+            try:
+                self.set_property(prop_name, np.array(values))
+            except Exception:
+                print(f"WARNING: Problem setting property in NwbSortingExtractor: {prop_name}")
 
         if stream_mode not in ["fsspec", "ros3"]:
             file_path = str(Path(file_path).absolute())
