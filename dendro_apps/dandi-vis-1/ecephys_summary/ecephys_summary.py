@@ -49,7 +49,7 @@ class EcephysSummaryProcessor(ProcessorBase):
                 recording = recording.frame_slice(0, int(duration_sec * recording.get_sampling_frequency()))
             else:
                 print(f'Not imposing duration_sec={duration_sec} because it is longer than the recording')
-        p_recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000)
+        p_recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000, dtype=np.int16)
         p_recording = spre.common_reference(p_recording)
 
         num_frames = recording.get_num_frames()
@@ -67,11 +67,9 @@ class EcephysSummaryProcessor(ProcessorBase):
             f.attrs["num_channels"] = recording.get_num_channels()
             f.attrs["channel_ids"] = [id for id in recording.get_channel_ids()]
             f.create_dataset("channel_locations", data=recording.get_channel_locations())
-            p_min = f.create_dataset("/binned_arrays/preprocessed_min", data=np.zeros((num_bins, M), dtype=np.float32))
-            p_max = f.create_dataset("/binned_arrays/preprocessed_max", data=np.zeros((num_bins, M), dtype=np.float32))
-            p_median = f.create_dataset("/binned_arrays/preprocessed_median", data=np.zeros((num_bins, M), dtype=np.float32))
-            p_stdev = f.create_dataset("/binned_arrays/preprocessed_stdev", data=np.zeros((num_bins, M), dtype=np.float32))
-            for p in [p_min, p_max, p_median]:
+            p_min = f.create_dataset("/binned_arrays/preprocessed_min", data=np.zeros((num_bins, M), dtype=np.int16))
+            p_max = f.create_dataset("/binned_arrays/preprocessed_max", data=np.zeros((num_bins, M), dtype=np.int16))
+            for p in [p_min, p_max]:
                 p.attrs["bin_size_sec"] = bin_size_sec
                 p.attrs["bin_size_frames"] = bin_size_frames
                 p.attrs["num_bins"] = num_bins
@@ -90,11 +88,9 @@ class EcephysSummaryProcessor(ProcessorBase):
                 num_bins_in_batch = bin_end - bin_start
                 print(f"Processing batch {ib} of {len(batches)}")
                 X = p_recording.get_traces(start_frame=bin_start * bin_size_frames, end_frame=bin_end * bin_size_frames)
-                X_reshaped = X.reshape((num_bins_in_batch, bin_size_frames, M)).astype(np.float32)
+                X_reshaped = X.reshape((num_bins_in_batch, bin_size_frames, M)).astype(np.int16)
                 p_min[bin_start:bin_end, :] = np.min(X_reshaped, axis=1)
                 p_max[bin_start:bin_end, :] = np.max(X_reshaped, axis=1)
-                p_median[bin_start:bin_end, :] = np.median(X_reshaped, axis=1)
-                p_stdev[bin_start:bin_end, :] = np.std(X_reshaped, axis=1)
 
         print('Converting .h5 to .nh5...')
         h5_to_nh5("output.h5", "output.nh5")
