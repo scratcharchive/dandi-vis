@@ -102,6 +102,46 @@
                     "tag": "spike sorting"
                 }
             ]
+        },
+        {
+            "name": "dandi-vis-1.ecephys_summary",
+            "description": "Create ecephys summary .nh5 file from an NWB file",
+            "label": "dandi-vis-1.ecephys_summary",
+            "inputs": [
+                {
+                    "name": "input",
+                    "description": "Input NWB file"
+                }
+            ],
+            "inputFolders": [],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": "Output .nh5 file"
+                }
+            ],
+            "outputFolders": [],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "description": "Path to electrical series within NWB file",
+                    "type": "str"
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "nwb"
+                },
+                {
+                    "tag": "ecephys"
+                }
+            ]
         }
     ]
 }
