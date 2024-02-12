@@ -110,7 +110,7 @@
             "inputs": [
                 {
                     "name": "input",
-                    "description": "Input NWB file"
+                    "description": "Input recording as SI .json file"
                 }
             ],
             "inputFolders": [],
@@ -121,19 +121,7 @@
                 }
             ],
             "outputFolders": [],
-            "parameters": [
-                {
-                    "name": "electrical_series_path",
-                    "description": "Path to electrical series within NWB file",
-                    "type": "str"
-                },
-                {
-                    "name": "duration_sec",
-                    "description": "Duration of the recording to process",
-                    "type": "Optional[float]",
-                    "default": null
-                }
-            ],
+            "parameters": [],
             "attributes": [
                 {
                     "name": "wip",

@@ -1,21 +1,13 @@
 #!/usr/bin/env python
 
-from typing import Optional
 from dendro.sdk import ProcessorBase, InputFile, OutputFile
 from dendro.sdk import BaseModel, Field
 import numpy as np
 
 
 class EcephysSummaryContext(BaseModel):
-    input: InputFile = Field(description="Input NWB file")
+    input: InputFile = Field(description="Input recording as SI .json file")
     output: OutputFile = Field(description="Output .nh5 file")
-    electrical_series_path: str = Field(
-        description="Path to electrical series within NWB file"
-    )
-    duration_sec: Optional[float] = Field(
-        default=None,
-        description="Duration of the recording to process"
-    )
 
 
 class EcephysSummaryProcessor(ProcessorBase):
@@ -28,29 +20,14 @@ class EcephysSummaryProcessor(ProcessorBase):
     @staticmethod
     def run(context: EcephysSummaryContext):
         import h5py
-        import spikeinterface.preprocessing as spre
-        import spikeinterface.extractors as se
+        import spikeinterface as si
         from nh5 import h5_to_nh5
 
-        # it's important that we get the file object
-        # instead of just the url because the
-        # presigned url needs to be renewed every hour
-        ff = context.input.get_file()
-        duration_sec = context.duration_sec
+        context.input.download('recording.json')
 
         print('Loading recording...')
-        recording = se.NwbRecordingExtractor(
-            file=ff,
-            electrical_series_path=context.electrical_series_path
-        )
-        if duration_sec:
-            print(f'Using duration_sec={duration_sec}')
-            if duration_sec < recording.get_num_frames() / recording.get_sampling_frequency():
-                recording = recording.frame_slice(0, int(duration_sec * recording.get_sampling_frequency()))
-            else:
-                print(f'Not imposing duration_sec={duration_sec} because it is longer than the recording')
-        p_recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000, dtype=np.int16)
-        p_recording = spre.common_reference(p_recording)
+        recording = si.load_extractor('recording.json')
+        assert isinstance(recording, si.BaseRecording), "Recording is not a BaseRecording"
 
         num_frames = recording.get_num_frames()
         bin_size_sec = 1 / 5
@@ -67,8 +44,8 @@ class EcephysSummaryProcessor(ProcessorBase):
             f.attrs["num_channels"] = recording.get_num_channels()
             f.attrs["channel_ids"] = [id for id in recording.get_channel_ids()]
             f.create_dataset("channel_locations", data=recording.get_channel_locations())
-            p_min = f.create_dataset("/binned_arrays/preprocessed_min", data=np.zeros((num_bins, M), dtype=np.int16))
-            p_max = f.create_dataset("/binned_arrays/preprocessed_max", data=np.zeros((num_bins, M), dtype=np.int16))
+            p_min = f.create_dataset("/binned_arrays/min", data=np.zeros((num_bins, M), dtype=np.int16))
+            p_max = f.create_dataset("/binned_arrays/max", data=np.zeros((num_bins, M), dtype=np.int16))
             for p in [p_min, p_max]:
                 p.attrs["bin_size_sec"] = bin_size_sec
                 p.attrs["bin_size_frames"] = bin_size_frames
@@ -87,7 +64,7 @@ class EcephysSummaryProcessor(ProcessorBase):
                 bin_end = batches[ib]['bin_end']
                 num_bins_in_batch = bin_end - bin_start
                 print(f"Processing batch {ib} of {len(batches)}")
-                X = p_recording.get_traces(start_frame=bin_start * bin_size_frames, end_frame=bin_end * bin_size_frames)
+                X = recording.get_traces(start_frame=bin_start * bin_size_frames, end_frame=bin_end * bin_size_frames)
                 X_reshaped = X.reshape((num_bins_in_batch, bin_size_frames, M)).astype(np.int16)
                 p_min[bin_start:bin_end, :] = np.min(X_reshaped, axis=1)
                 p_max[bin_start:bin_end, :] = np.max(X_reshaped, axis=1)
