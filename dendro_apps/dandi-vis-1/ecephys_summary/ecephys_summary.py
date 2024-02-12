@@ -19,9 +19,15 @@ class EcephysSummaryProcessor(ProcessorBase):
 
     @staticmethod
     def run(context: EcephysSummaryContext):
+        import os
+        import sys
         import h5py
         import spikeinterface as si
         from nh5 import h5_to_nh5
+
+        # we need for nwbdendroextractors module to be discoverable
+        thisdir = os.path.dirname(os.path.realpath(__file__))
+        sys.path.append(os.path.join(thisdir, 'nwbdendroextractors'))
 
         context.input.download('recording.json')
 
