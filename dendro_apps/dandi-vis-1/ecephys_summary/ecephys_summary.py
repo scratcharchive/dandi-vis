@@ -27,7 +27,7 @@ class EcephysSummaryProcessor(ProcessorBase):
 
         # we need for nwbdendroextractors module to be discoverable
         thisdir = os.path.dirname(os.path.realpath(__file__))
-        sys.path.append(os.path.join(thisdir, 'nwbdendroextractors'))
+        sys.path.append(thisdir)
 
         context.input.download('recording.json')
 
