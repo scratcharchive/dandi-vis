@@ -16,7 +16,7 @@ RUN pip install mountainsort5==0.5.3
 RUN pip install nh5==0.1.3
 
 # Install dendro
-RUN pip install dendro==0.1.36
+RUN pip install dendro==0.2.2
 
 # Copy files into the container
 RUN mkdir /app
