@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from turtle import st
 from dendro.sdk import ProcessorBase, InputFile, OutputFile
 from dendro.sdk import BaseModel, Field
 import numpy as np
@@ -41,8 +40,8 @@ class EcephysSummaryProcessor(ProcessorBase):
             recording=recording1,
             file_paths=['recording.dat'],
             dtype='float32',
-            n_jobs=1,
-            chunk_duration='5s'  # not sure how to best set this
+            n_jobs=5,
+            chunk_duration='20s'  # not sure how to best set this
         )
         print('Loading recording from .dat file...')
         recording = si.BinaryRecordingExtractor(
@@ -72,12 +71,24 @@ class EcephysSummaryProcessor(ProcessorBase):
             f.create_dataset("channel_locations", data=recording.get_channel_locations().astype(np.float32))
             p_min = f.create_dataset("/binned_arrays/min", data=np.zeros((num_bins, M), dtype=np.int16))
             p_max = f.create_dataset("/binned_arrays/max", data=np.zeros((num_bins, M), dtype=np.int16))
+            p_min_ds5 = f.create_dataset("/binned_arrays/min_ds3", data=np.zeros((int(num_bins / 5), M), dtype=np.int16))
+            p_max_ds5 = f.create_dataset("/binned_arrays/max_ds3", data=np.zeros((int(num_bins / 5), M), dtype=np.int16))
+            p_min_ds25 = f.create_dataset("/binned_arrays/min_ds25", data=np.zeros((int(num_bins / 25), M), dtype=np.int16))
+            p_max_ds25 = f.create_dataset("/binned_arrays/max_ds25", data=np.zeros((int(num_bins / 25), M), dtype=np.int16))
             for p in [p_min, p_max]:
                 p.attrs["bin_size_sec"] = bin_size_sec
                 p.attrs["bin_size_frames"] = bin_size_frames
                 p.attrs["num_bins"] = num_bins
+            for p in [p_min_ds5, p_max_ds5]:
+                p.attrs["bin_size_sec"] = bin_size_sec * 5
+                p.attrs["bin_size_frames"] = bin_size_frames * 5
+                p.attrs["num_bins"] = int(num_bins / 5)
+            for p in [p_min_ds25, p_max_ds25]:
+                p.attrs["bin_size_sec"] = bin_size_sec * 25
+                p.attrs["bin_size_frames"] = bin_size_frames * 25
+                p.attrs["num_bins"] = int(num_bins / 25)
             batches = []
-            num_bins_per_batch = 1000
+            num_bins_per_batch = 25 * 50  # should be a multiple of 25
             i = 0
             while i < num_bins:
                 bin_start = i
@@ -93,6 +104,12 @@ class EcephysSummaryProcessor(ProcessorBase):
                 X_reshaped = X.reshape((num_bins_in_batch, bin_size_frames, M)).astype(np.int16)
                 p_min[bin_start:bin_end, :] = np.min(X_reshaped, axis=1)
                 p_max[bin_start:bin_end, :] = np.max(X_reshaped, axis=1)
+                X_ds5 = X_reshaped.reshape((int(num_bins_in_batch / 5), 5, bin_size_frames, M))
+                p_min_ds5[int(bin_start / 5):int(bin_end / 5), :] = np.min(X_ds5, axis=(2, 3))
+                p_max_ds5[int(bin_start / 5):int(bin_end / 5), :] = np.max(X_ds5, axis=(2, 3))
+                X_ds25 = X_reshaped.reshape((int(num_bins_in_batch / 25), 25, bin_size_frames, M))
+                p_min_ds25[int(bin_start / 25):int(bin_end / 25), :] = np.min(X_ds25, axis=(2, 3))
+                p_max_ds25[int(bin_start / 25):int(bin_end / 25), :] = np.max(X_ds25, axis=(2, 3))
 
         print('Converting .h5 to .nh5...')
         h5_to_nh5("output.h5", "output.nh5")

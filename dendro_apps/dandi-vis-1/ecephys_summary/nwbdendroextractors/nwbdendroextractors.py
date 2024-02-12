@@ -577,10 +577,8 @@ class NwbRecordingExtractor(BaseRecording):
 
         # fetch and add main recording properties
         if use_pynwb:
-            print('--------------------------------- a')
             gains, offsets, locations, groups = self._fetch_main_properties_pynwb()
         else:
-            print('--------------------------------- b')
             gains, offsets, locations, groups = self._fetch_main_properties_backend()
         self.set_channel_gains(gains)
         self.set_channel_offsets(offsets)
@@ -591,7 +589,6 @@ class NwbRecordingExtractor(BaseRecording):
 
         # fetch and add additional recording properties
         if load_channel_properties:
-            print('--- 1')
             if use_pynwb:
                 electrodes_table = self._nwbfile.electrodes
                 electrodes_indices = self.electrical_series.electrodes.data[:]
