@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from turtle import st
 from dendro.sdk import ProcessorBase, InputFile, OutputFile
 from dendro.sdk import BaseModel, Field
 import numpy as np
@@ -48,8 +49,8 @@ class EcephysSummaryProcessor(ProcessorBase):
             f.attrs["num_frames"] = num_frames
             f.attrs["sampling_frequency"] = float(recording.get_sampling_frequency())
             f.attrs["num_channels"] = recording.get_num_channels()
-            f.attrs["channel_ids"] = [id for id in recording.get_channel_ids()]
-            f.create_dataset("channel_locations", data=recording.get_channel_locations())
+            f.attrs["channel_ids"] = [_format_id(id) for id in recording.get_channel_ids()]
+            f.create_dataset("channel_locations", data=recording.get_channel_locations().astype(np.float32))
             p_min = f.create_dataset("/binned_arrays/min", data=np.zeros((num_bins, M), dtype=np.int16))
             p_max = f.create_dataset("/binned_arrays/max", data=np.zeros((num_bins, M), dtype=np.int16))
             for p in [p_min, p_max]:
@@ -79,3 +80,11 @@ class EcephysSummaryProcessor(ProcessorBase):
         h5_to_nh5("output.h5", "output.nh5")
         print('Uploading .nh5...')
         context.output.upload("output.nh5")
+
+
+def _format_id(id):
+    # if it's a number of some kind, convert to int
+    try:
+        return int(id)
+    except ValueError:
+        return str(id)
