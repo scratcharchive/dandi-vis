@@ -22,7 +22,7 @@ RUN pip install nh5==0.1.3
 RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro \
     && cd /src/dendro/python \
     && git checkout file-cache \
-    && pip install -e . && echo "2"
+    && pip install -e . && echo "3"
 
 # Copy files into the container
 RUN mkdir /app

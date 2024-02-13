@@ -41,15 +41,21 @@ class SpikeSortingSummaryProcessor(ProcessorBase):
         # and try/catch for setting properties
         from .NwbExtractors import NwbSortingExtractor
 
-        input_file_url = context.input.get_url()
+        if context.input.is_local():
+            file_path = context.input.get_local_file_name()
+            stream_mode = None
+        else:
+            file_path = context.input.get_url()
+            stream_mode = "remfile"
+        assert file_path is not None
 
         units_path = context.units_path
         sampling_frequency = context.sampling_frequency
 
         # Load the spike sorting
         sorting = NwbSortingExtractor(
-            input_file_url,
-            stream_mode="remfile",
+            file_path,
+            stream_mode=stream_mode,
             units_path=units_path,
             sampling_frequency=sampling_frequency,
         )
