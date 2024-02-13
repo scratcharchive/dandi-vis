@@ -15,8 +15,14 @@ RUN pip install mountainsort5==0.5.3
 # Install nh5
 RUN pip install nh5==0.1.3
 
-# Install dendro
-RUN pip install dendro==0.2.2
+# # Install dendro
+# RUN pip install dendro==0.2.2
+
+# # Install dendro from github
+RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro \
+    && cd /src/dendro/python \
+    && git checkout file-cache \
+    && pip install -e . && echo "2"
 
 # Copy files into the container
 RUN mkdir /app
