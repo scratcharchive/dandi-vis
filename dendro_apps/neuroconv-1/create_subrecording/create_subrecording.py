@@ -21,6 +21,8 @@ class CreateSubrecordingProcessor(ProcessorBase):
 
     @staticmethod
     def run(context: CreateSubrecordingContext):
+        import pynwb
+        import h5py
         import spikeinterface.extractors as se
         from neuroconv.tools.spikeinterface import write_recording
 
@@ -39,8 +41,38 @@ class CreateSubrecordingProcessor(ProcessorBase):
             end_frame=end_frame
         )
 
-        print('Writing subrecording to NWB file')
-        write_recording(subrecording, nwbfile_path="output.nwb")
+        print('Creating new NWB file')
+        h5_file = h5py.File(file, 'r')
+        with pynwb.NWBHDF5IO(file=h5_file, mode='r') as io:
+            nwbfile = io.read()
+            new_nwbfile = create_nwbfile(nwbfile)
+
+            print('Writing subrecording to NWB file')
+            write_recording(subrecording, nwbfile_path="output.nwb", nwbfile=new_nwbfile)
 
         print('Uploading the new NWB file')
         context.output.upload('output.nwb')
+
+
+def create_nwbfile(nwbfile_other):
+    import pynwb
+    from uuid import uuid4
+    return pynwb.NWBFile(
+        session_description=nwbfile_other.session_description,
+        identifier=str(uuid4()),
+        session_start_time=nwbfile_other.session_start_time,
+        experimenter=nwbfile_other.experimenter,
+        experiment_description=nwbfile_other.experiment_description,
+        lab=nwbfile_other.lab,
+        institution=nwbfile_other.institution,
+        subject=pynwb.file.Subject(
+            subject_id=nwbfile_other.subject.subject_id,
+            age=nwbfile_other.subject.age,
+            date_of_birth=nwbfile_other.subject.date_of_birth,
+            sex=nwbfile_other.subject.sex,
+            species=nwbfile_other.subject.species,
+            description=nwbfile_other.subject.description
+        ),
+        session_id=nwbfile_other.session_id,
+        keywords=nwbfile_other.keywords
+    )
