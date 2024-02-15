@@ -1,0 +1,59 @@
+{
+    "name": "neuroconv-1",
+    "description": "Miscellaneous processors for neuroconv-1",
+    "appImage": "ghcr.io/magland/neuroconv-1:latest",
+    "appExecutable": "/app/main.py",
+    "executable": "/app/main.py",
+    "processors": [
+        {
+            "name": "neuroconv-1.create_subrecording",
+            "description": "Create a time slice of an ecephys recording in an NWB file",
+            "label": "neuroconv-1.create_subrecording",
+            "inputs": [
+                {
+                    "name": "input",
+                    "description": "Input recording .nwb file"
+                }
+            ],
+            "inputFolders": [],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": "Output recording .nwb file"
+                }
+            ],
+            "outputFolders": [],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "description": "Path to the electrical series in the NWB file",
+                    "type": "str"
+                },
+                {
+                    "name": "start_time_sec",
+                    "description": "Start time in seconds",
+                    "type": "float"
+                },
+                {
+                    "name": "end_time_sec",
+                    "description": "End time in seconds",
+                    "type": "float"
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "nwb"
+                },
+                {
+                    "tag": "ecephys"
+                }
+            ]
+        }
+    ]
+}
