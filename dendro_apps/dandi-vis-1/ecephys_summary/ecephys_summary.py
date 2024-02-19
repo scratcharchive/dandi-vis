@@ -116,4 +116,4 @@ def _format_id(id):
     try:
         return int(id)
     except ValueError:
-        return str(id)
+        return str(id).encode('utf-8')
