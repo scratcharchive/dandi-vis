@@ -19,7 +19,7 @@ RUN pip install nh5==0.1.3
 RUN pip install dendro==0.2.4
 
 # Install dendroextractors
-RUN pip install dendroextractors==0.1.2
+RUN pip install dendroextractors==0.1.4
 
 # # Install dendro from github
 # RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro \
