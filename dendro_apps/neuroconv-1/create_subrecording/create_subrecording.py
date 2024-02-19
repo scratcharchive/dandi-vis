@@ -43,7 +43,7 @@ class CreateSubrecordingProcessor(ProcessorBase):
 
         print('Creating new NWB file')
         h5_file = h5py.File(file, 'r')
-        with pynwb.NWBHDF5IO(file=h5_file, mode='r') as io:
+        with pynwb.NWBHDF5IO(file=h5_file, mode='r', load_namespaces=True) as io:
             nwbfile = io.read()
             new_nwbfile = create_nwbfile(nwbfile)
 
