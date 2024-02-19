@@ -33,4 +33,3 @@ COPY *.py /app/
 COPY tuning_curves_2d/*.py /app/tuning_curves_2d/
 COPY spike_sorting_summary/*.py /app/spike_sorting_summary/
 COPY ecephys_summary/*.py /app/ecephys_summary/
-COPY ecephys_summary/nwbdendroextractors/*.py /app/ecephys_summary/nwbdendroextractors/
