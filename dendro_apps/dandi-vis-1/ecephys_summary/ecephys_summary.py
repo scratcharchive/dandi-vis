@@ -65,8 +65,8 @@ class EcephysSummaryProcessor(ProcessorBase):
             f.create_dataset("channel_locations", data=recording.get_channel_locations().astype(np.float32))
             p_min = f.create_dataset("/binned_arrays/min", data=np.zeros((num_bins, M), dtype=np.int16))
             p_max = f.create_dataset("/binned_arrays/max", data=np.zeros((num_bins, M), dtype=np.int16))
-            p_min_ds5 = f.create_dataset("/binned_arrays/min_ds3", data=np.zeros((int(num_bins / 5), M), dtype=np.int16))
-            p_max_ds5 = f.create_dataset("/binned_arrays/max_ds3", data=np.zeros((int(num_bins / 5), M), dtype=np.int16))
+            p_min_ds5 = f.create_dataset("/binned_arrays/min_ds5", data=np.zeros((int(num_bins / 5), M), dtype=np.int16))
+            p_max_ds5 = f.create_dataset("/binned_arrays/max_ds5", data=np.zeros((int(num_bins / 5), M), dtype=np.int16))
             p_min_ds25 = f.create_dataset("/binned_arrays/min_ds25", data=np.zeros((int(num_bins / 25), M), dtype=np.int16))
             p_max_ds25 = f.create_dataset("/binned_arrays/max_ds25", data=np.zeros((int(num_bins / 25), M), dtype=np.int16))
             for p in [p_min, p_max]:
