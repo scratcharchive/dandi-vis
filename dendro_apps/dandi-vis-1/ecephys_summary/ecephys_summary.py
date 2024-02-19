@@ -48,7 +48,7 @@ class EcephysSummaryProcessor(ProcessorBase):
         print('Setting channel locations...')
         recording.set_channel_locations(recording1.get_channel_locations())
 
-        num_frames = recording.get_num_frames()
+        num_frames = int(recording.get_num_frames())
         bin_size_sec = 1 / 5
         bin_size_frames = int(bin_size_sec * recording.get_sampling_frequency())
         num_bins = int(num_frames / bin_size_frames)
@@ -60,8 +60,9 @@ class EcephysSummaryProcessor(ProcessorBase):
             f.attrs["format_version"] = 1
             f.attrs["num_frames"] = num_frames
             f.attrs["sampling_frequency"] = float(recording.get_sampling_frequency())
-            f.attrs["num_channels"] = recording.get_num_channels()
-            f.attrs["channel_ids"] = [_format_id(id) for id in recording.get_channel_ids()]
+            f.attrs["num_channels"] = int(recording.get_num_channels())
+            # attributes must be homogeneous types
+            f.attrs["channel_ids"] = _format_ids([id for id in recording.get_channel_ids()])
             f.create_dataset("channel_locations", data=recording.get_channel_locations().astype(np.float32))
             p_min = f.create_dataset("/binned_arrays/min", data=np.zeros((num_bins, M), dtype=np.int16))
             p_max = f.create_dataset("/binned_arrays/max", data=np.zeros((num_bins, M), dtype=np.int16))
@@ -111,9 +112,19 @@ class EcephysSummaryProcessor(ProcessorBase):
         context.output.upload("output.nh5")
 
 
-def _format_id(id):
-    # if it's a number of some kind, convert to int
-    try:
-        return int(id)
-    except ValueError:
-        return str(id).encode('utf-8')
+def _format_ids(ids: list):
+    # hdf5 attributes need to be homogeneous types
+    all_are_ints = True
+    for id in ids:
+        try:
+            int_val = int(id)
+        except ValueError:
+            all_are_ints = False
+            break
+        if int_val != id:
+            all_are_ints = False
+            break
+    if all_are_ints:
+        return [int(id) for id in ids]
+    else:
+        return [str(id) for id in ids]
