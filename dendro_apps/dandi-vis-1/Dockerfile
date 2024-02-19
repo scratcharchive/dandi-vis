@@ -16,7 +16,10 @@ RUN pip install mountainsort5==0.5.3
 RUN pip install nh5==0.1.3
 
 # Install dendro
-RUN pip install dendro==0.2.3
+RUN pip install dendro==0.2.4
+
+# Install dendroextractors
+RUN pip install dendroextractors==0.1.0
 
 # # Install dendro from github
 # RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro \

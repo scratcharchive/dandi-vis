@@ -36,9 +36,7 @@ class SpikeSortingSummaryProcessor(ProcessorBase):
         from nh5 import h5_to_nh5
         import h5py
 
-        # with remfile support
-        # and support for units_path
-        # and try/catch for setting properties
+        # we need support for the units_path parameter
         from .NwbExtractors import NwbSortingExtractor
 
         if context.input.is_local():
@@ -73,7 +71,7 @@ class SpikeSortingSummaryProcessor(ProcessorBase):
             total_num_spikes += len(st)
             if len(st) > 0:
                 max_time = max(max_time, np.max(st) / sorting.get_sampling_frequency())
-        total_duration_sec = max_time  # we assume the start time is 0
+        total_duration_sec: float = max_time  # type: ignore # we assume the start time is 0
 
         output_h5_fname = "output.h5"
         with h5py.File(output_h5_fname, "w") as f:
@@ -130,8 +128,10 @@ def _create_spike_trains(
         50000,
         100000,
     ]
-    for duration_per_chunk_sec in duration_per_chunk_sec_options:
-        if approx_duration_per_chunk_sec < duration_per_chunk_sec:
+    duration_per_chunk_sec = duration_per_chunk_sec_options[0]
+    for dd in duration_per_chunk_sec_options:
+        if approx_duration_per_chunk_sec < dd:
+            duration_per_chunk_sec = dd
             break
     num_chunks = int(np.ceil(total_duration_sec / duration_per_chunk_sec))
     print(f"Using {num_chunks} chunks of duration {duration_per_chunk_sec} sec")
@@ -160,9 +160,7 @@ def _create_spike_trains(
             (
                 sorting.get_unit_spike_train(
                     unit_id, start_frame=start_frame, end_frame=end_frame
-                )
-                / sorting.get_sampling_frequency()
-                - start_time
+                ) / sorting.get_sampling_frequency() - start_time
             ).astype(np.float32)
             for unit_id in unit_ids
         ]
@@ -192,6 +190,7 @@ def _create_autocrorrelograms(
     from .compute_correlogram_data import compute_correlogram_data
 
     bin_counts_list = []
+    bin_edges_sec_list = []
     for unit_id in unit_ids:
         a = compute_correlogram_data(
             sorting=sorting,
@@ -202,6 +201,9 @@ def _create_autocrorrelograms(
         bin_edges_sec = a["bin_edges_sec"]
         bin_counts = a["bin_counts"]
         bin_counts_list.append(bin_counts)
+        bin_edges_sec_list.append(bin_edges_sec)
+    assert len(bin_edges_sec_list) > 0
+    bin_edges_sec = bin_edges_sec_list[0]
     num_bins = len(bin_edges_sec) - 1
     all_bin_counts = np.zeros((len(unit_ids), num_bins), dtype=np.int32)
     for i in range(len(unit_ids)):
