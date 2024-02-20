@@ -34,8 +34,8 @@ class EcephysSummaryProcessor(ProcessorBase):
             recording=recording1,
             file_paths=['recording.dat'],
             dtype='float32',
-            n_jobs=5,
-            chunk_duration='4s'  # not sure how to best set this
+            n_jobs=4,
+            chunk_duration='1s'  # not sure how to best set this
         )
         print('Loading recording from .dat file...')
         recording = si.BinaryRecordingExtractor(
