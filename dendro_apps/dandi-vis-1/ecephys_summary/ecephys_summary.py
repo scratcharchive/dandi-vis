@@ -8,6 +8,8 @@ import numpy as np
 class EcephysSummaryContext(BaseModel):
     input: InputFile = Field(description="Input recording as SI .json file")
     output: OutputFile = Field(description="Output .nh5 file")
+    n_jobs: int = Field(default=4, description="Number of jobs to use for writing .dat file")
+    chunk_duration: str = Field(default="1s", description="Chunk duration for writing .dat file")
 
 
 class EcephysSummaryProcessor(ProcessorBase):
@@ -34,8 +36,8 @@ class EcephysSummaryProcessor(ProcessorBase):
             recording=recording1,
             file_paths=['recording.dat'],
             dtype='float32',
-            n_jobs=1,  # not sure how to best set this
-            chunk_duration='1s'  # not sure how to best set this
+            n_jobs=context.n_jobs,
+            chunk_duration=context.chunk_duration
         )
         print('Loading recording from .dat file...')
         recording = si.BinaryRecordingExtractor(
