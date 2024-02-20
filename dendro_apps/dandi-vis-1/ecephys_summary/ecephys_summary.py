@@ -34,7 +34,7 @@ class EcephysSummaryProcessor(ProcessorBase):
             recording=recording1,
             file_paths=['recording.dat'],
             dtype='float32',
-            n_jobs=4,
+            n_jobs=1,  # not sure how to best set this
             chunk_duration='1s'  # not sure how to best set this
         )
         print('Loading recording from .dat file...')
@@ -45,6 +45,7 @@ class EcephysSummaryProcessor(ProcessorBase):
             num_channels=recording1.get_num_channels(),
             dtype='float32'
         )
+
         print('Setting channel locations...')
         recording.set_channel_locations(recording1.get_channel_locations())
 
