@@ -7,7 +7,7 @@ RUN pip install neuroconv
 RUN pip install spikeinterface==0.100.0
 
 # Install dendro
-RUN pip install dendro==0.2.9
+RUN pip install dendro==0.2.10
 
 # Copy files into the container
 RUN mkdir /app
