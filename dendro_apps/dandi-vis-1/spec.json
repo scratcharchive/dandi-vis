@@ -121,7 +121,20 @@
                 }
             ],
             "outputFolders": [],
-            "parameters": [],
+            "parameters": [
+                {
+                    "name": "n_jobs",
+                    "description": "Number of jobs to use for writing .dat file",
+                    "type": "int",
+                    "default": 4
+                },
+                {
+                    "name": "chunk_duration",
+                    "description": "Chunk duration for writing .dat file",
+                    "type": "str",
+                    "default": "1s"
+                }
+            ],
             "attributes": [
                 {
                     "name": "wip",
