@@ -48,7 +48,16 @@ class CreateSubrecordingProcessor(ProcessorBase):
             new_nwbfile = create_nwbfile(nwbfile)
 
             print('Writing subrecording to NWB file')
-            write_recording(subrecording, nwbfile_path="output.nwb", nwbfile=new_nwbfile)
+            write_recording(
+                subrecording,
+                nwbfile_path="output.nwb",
+                nwbfile=new_nwbfile,
+                compression=None,
+                iterator_type='v2',
+                iterator_opts={
+                    'display_progress': True
+                }
+            )
 
         print('Uploading the new NWB file')
         context.output.upload('output.nwb')
