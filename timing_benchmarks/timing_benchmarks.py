@@ -61,7 +61,7 @@ def main():
             si.BinaryRecordingExtractor.write_recording(
                 recording=recording_memory,
                 file_paths=[tmpdir + "/recording.dat"],
-                dtype="float32",
+                dtype=recording_memory.dtype,
                 n_jobs=n_jobs,
                 chunk_duration=chunk_duration,
                 mp_context="spawn",
@@ -75,7 +75,7 @@ def main():
             si.BinaryRecordingExtractor.write_recording(
                 recording=recording_filtered,
                 file_paths=[tmpdir + "/recording_filtered.dat"],
-                dtype="float32",
+                dtype=recording_filtered.dtype,
                 n_jobs=n_jobs,
                 chunk_duration=chunk_duration,
                 mp_context="spawn",
@@ -113,7 +113,7 @@ def main():
             se.BinaryRecordingExtractor.write_recording(
                 recording_local,
                 file_paths=[tmpdir + "/recording_local.dat"],
-                dtype="float32",
+                dtype=recording_local.dtype,
                 n_jobs=n_jobs,
                 chunk_duration=chunk_duration,
                 mp_context="spawn",
@@ -127,7 +127,7 @@ def main():
             se.BinaryRecordingExtractor.write_recording(
                 recording_local,
                 file_paths=[tmpdir + "/recording_local_2.dat"],
-                dtype="float32",
+                dtype=recording_local.dtype,
                 n_jobs=n_jobs,
                 chunk_duration=chunk_duration,
                 mp_context="spawn",
