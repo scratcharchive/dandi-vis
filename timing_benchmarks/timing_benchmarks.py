@@ -4,7 +4,7 @@ import time
 import h5py
 import tempfile
 from uuid import uuid4
-import urllib.request
+import requests
 import spikeinterface.extractors as se
 import spikeinterface.preprocessing as spre
 import spikeinterface as si
@@ -49,7 +49,8 @@ def main():
         with TimedTask("Download equivalent amount of data directly"):
             num_bytes = traces.nbytes
             print(f"Downloading {num_bytes / 1e6:.2f} MB")
-            buf = _download_bytes(nwb_url, 0, num_bytes - 1)  # noqa: F841
+            output_file = tmpdir + "/sample.dat"
+            buf = _download_file_byte_range(nwb_url, output_file, 0, num_bytes - 1)  # noqa: F841
 
         with TimedTask("Create recording extractor in memory"):
             recording_memory = se.NumpyRecording(
@@ -156,11 +157,16 @@ class TimedTask:
         _timings.append((self.task_name, self.end_time - self.start_time))
 
 
-def _download_bytes(url: str, start_byte: int, end_byte: int) -> bytes:
-    req = urllib.request.Request(url)
-    req.headers["Range"] = f"bytes={start_byte}-{end_byte}"
-    with urllib.request.urlopen(req) as response:
-        return response.read()
+def _download_file_byte_range(url: str, dest_file_path: str, start_byte: int, end_byte: int):
+    # stream the download
+    headers = {'Range': f'bytes={start_byte}-{end_byte}'}
+    r = requests.get(url, headers=headers, stream=True, timeout=60 * 60 * 24 * 7)
+    if r.status_code != 206:
+        raise Exception(f"Failed to download file: {r.status_code} {r.reason}")
+    with open(dest_file_path, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
 
 
 def _create_dummy_nwbfile():

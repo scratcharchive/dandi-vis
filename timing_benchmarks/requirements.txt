@@ -1,0 +1,6 @@
+h5py
+spikeinterface
+remfile
+neuroconv
+pynwb
+pydantic<2
