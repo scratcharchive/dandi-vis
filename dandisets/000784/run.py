@@ -6,7 +6,6 @@ import dendro.client as den
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from common.vis_spike_sorting_summary import vis_spike_sorting_summary
 from common._get_nwb_file_paths import _get_nwb_file_paths
 
 
