@@ -1,3 +1,4 @@
+from typing import Any, Union
 import os
 from jinja2 import Environment, FileSystemLoader
 import dendro.client as den
@@ -6,8 +7,6 @@ import dendro.client as den
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from common.vis_spike_sorting_summary import vis_spike_sorting_summary
-from common.vis_tuning_curves import vis_tuning_curves_2d
 from common._get_nwb_file_paths import _get_nwb_file_paths
 
 
@@ -28,29 +27,56 @@ def main():
 
     files_out = []
     for nwb_file_name in nwb_file_names:
-        nwb_file_name_2 = nwb_file_name[len(f"imported/{dandiset_id}/") :]
-        file_out = {"nwb_file_name": nwb_file_name_2, "visualizations": []}
-        print(f"Processing {nwb_file_name_2}")
+        name = nwb_file_name[len(f"imported/{dandiset_id}/") :]
+        x = {"nwb_file_name": name, "visualizations": []}
+        print(f"Processing {name}")
 
-        v = vis_tuning_curves_2d(
-            project=project,
-            nwb_file_name=nwb_file_name,
-            dandiset_id=dandiset_id
-        )
-        file_out["visualizations"].append(v)
-
-        v = vis_spike_sorting_summary(
-            project=project, nwb_file_name=nwb_file_name, dandiset_id=dandiset_id,
-            units_path="/units", sampling_frequency=None
-        )
-        file_out["visualizations"].append(v)
+        # spike sorting summary
+        f = project.get_file(f'generated/{dandiset_id}/{name}/spike_sorting_summary.nh5')
+        if f is not None:
+            if f._file_data.content.startswith('url:'):
+                url = f.get_url()
+                figurl0 = f"https://figurl.org/f?v=npm://@fi-sci/figurl-dandi-vis@0.1/dist&d=%7B%22nh5%22:%22{url}%22%7D&label={name}/spike_sorting_summary.nh5"
+                status = 'done'
+            elif f._file_data.content == 'pending':
+                status = 'pending'
+                figurl0 = ''
+            else:
+                status = 'unknown'
+                figurl0 = ''
+            x['visualizations'].append({
+                'type': 'spike_sorting_summary',
+                'label': 'Spike sorting summary',
+                'status': status,
+                'figurl': figurl0
+            })
+        
+        # tuning curves 2d
+        f = project.get_file(f'generated/{dandiset_id}/{name}/tuning_curves_2d.nh5')
+        if f is not None:
+            if f._file_data.content.startswith('url:'):
+                url = f.get_url()
+                figurl0 = f"https://figurl.org/f?v=npm://@fi-sci/figurl-dandi-vis@0.1/dist&d=%7B%22nh5%22:%22{url}%22%7D&label={name}/tuning_curves_2d.nh5"
+                status = 'done'
+            elif f._file_data.content == 'pending':
+                status = 'pending'
+                figurl0 = ''
+            else:
+                status = 'unknown'
+                figurl0 = ''
+            x['visualizations'].append({
+                'type': 'tuning_curves_2d',
+                'label': 'Tuning curves 2D',
+                'status': status,
+                'figurl': figurl0
+            })
 
         ff = project.get_file(nwb_file_name)
-        file_out["neurosift_url"] = (
+        x["neurosift_url"] = (
             f"https://flatironinstitute.github.io/neurosift/?p=/nwb&url={ff.get_url()}&dandisetId={dandiset_id}&dandisetVersion={dandiset_version}"
         )
 
-        files_out.append(file_out)
+        files_out.append(x)
 
     data = {"dandiset_id": dandiset_id, "files": files_out}
 
